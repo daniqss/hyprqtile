@@ -1,15 +1,23 @@
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
-/// Qtile-like workspaces and monitors management for the
-/// Hyprland compositor
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-pub struct Args {
-    /// Workspace to move into
-    #[arg(short, long)]
-    workspace_id: i32,
+#[command(about = "Qtile-like workspaces and monitors management for the Hyprland compositor")]
+pub struct HyprQtileArgs {
+    /// Moves to the specified workspace
+    #[arg(short, long, conflicts_with = "next", conflicts_with = "previous")]
+    pub workspaces: Option<i32>,
+
+    /// Moves to the previous workspace
+    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspaces", conflicts_with = "next")]
+    pub previous: bool,
+
+    /// Moves to the next workspace
+    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspaces", conflicts_with = "previous")]
+    pub next: bool,
 }
 
-pub fn parse() -> i32 {
-    Args::parse().workspace_id
+impl HyprQtileArgs {
+    pub fn parse_args() -> Self {
+        HyprQtileArgs::parse()
+    }
 }

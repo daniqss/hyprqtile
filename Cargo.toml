@@ -4,5 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.6", features = ["derive"] }
+clap = {version = "4.5.6", features = ["derive"]}
 hyprland = { git = "https://github.com/hyprland-community/hyprland-rs", branch = "master" }
