@@ -56,6 +56,25 @@ pub fn move_to(workspace_id: i32) -> Result<()> {
     Ok(())
 }
 
+pub fn get_current_workspace() -> Result<i32> {
+    let workspace = Workspace::get_active()?.id;
+    Ok(workspace)
+}
+
+pub fn move_to_next() -> Result<()> {
+    match get_current_workspace() {
+        Ok(workspace) => move_to(workspace + 1),
+        Err(hypr_error) => Err(hypr_error),
+    }
+}
+
+pub fn move_to_previous() -> Result<()> {
+    match get_current_workspace() {
+        Ok(workspace) => move_to(workspace - 1),
+        Err(hypr_error) => Err(hypr_error),
+    }
+}
+
 pub fn swap_active_workspace(active_monitor_id: i128, passive_monitor_id: i128) -> Result<()> {
     let active_monitor = MonitorIdentifier::Id(active_monitor_id);
     let passive_monitor = MonitorIdentifier::Id(passive_monitor_id);
