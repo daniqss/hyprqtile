@@ -8,13 +8,11 @@ use prelude::*;
 fn main() -> Result<()> {
     let args = HyprQtileArgs::parse_args();
 
-    println!("{:?}", args);
-
     match args {
         HyprQtileArgs {
-            workspaces: Some(ws),
+            workspaces: Some(workspace),
             ..
-        } => move_to(ws)?,
+        } => move_to(workspace)?,
         HyprQtileArgs { previous: true, .. } => move_to_previous()?,
         HyprQtileArgs { next: true, .. } => move_to_next()?,
         _ => (),

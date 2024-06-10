@@ -1,7 +1,10 @@
 use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
-#[command(about = "Qtile-like workspaces and monitors management for the Hyprland compositor")]
+#[command(
+    about = "Qtile-like workspaces and monitors management for the Hyprland compositor",
+    arg_required_else_help = true
+)]
 pub struct HyprQtileArgs {
     /// Moves to the specified workspace
     #[arg(short, long, conflicts_with = "next", conflicts_with = "previous")]
