@@ -1,8 +1,24 @@
 [package]
 name = "hyprqtile"
+authors = ["daniqss"]
+license = "GPL-3.0 license"
+repository = "https://github.com/daniqss/hyprqtile"
+keywords = ["cli", "hyprland", "qtile"]
+categories = ["command-line-utilities"]
+description = "Qtile-like workspaces and monitors management for the Hyprland compositor"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 clap = {version = "4.5.6", features = ["derive"]}
 hyprland = { git = "https://github.com/hyprland-community/hyprland-rs", branch = "master" }
+
+[profile.release]
+opt-level = "z"  
+lto = true       
+codegen-units = 1 
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true
