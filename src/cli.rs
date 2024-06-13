@@ -8,14 +8,14 @@ use clap::{ArgAction, Parser};
 pub struct HyprQtileArgs {
     /// Moves to the specified workspace
     #[arg(short, long, conflicts_with = "next", conflicts_with = "previous")]
-    pub workspaces: Option<i32>,
+    pub workspace: Option<i32>,
 
     /// Moves to the previous workspace
-    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspaces", conflicts_with = "next")]
+    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspace", conflicts_with = "next")]
     pub previous: bool,
 
     /// Moves to the next workspace
-    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspaces", conflicts_with = "previous")]
+    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspace", conflicts_with = "previous")]
     pub next: bool,
 }
 

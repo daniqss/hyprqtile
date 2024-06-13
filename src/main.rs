@@ -10,7 +10,7 @@ fn main() -> Result<()> {
 
     match args {
         HyprQtileArgs {
-            workspaces: Some(workspace),
+            workspace: Some(workspace),
             ..
         } => move_to(workspace)?,
         HyprQtileArgs { previous: true, .. } => move_to_previous()?,
