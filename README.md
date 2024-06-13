@@ -1,7 +1,7 @@
 # hyprqtile
 Qtile-like workspaces and monitors management for the Hyprland compositor that uses hyprland-rs to communicate with the compositor's sockets. 
 
-# Installation
+# installation
 ## Cargo 
 ```bash
 cargo install hyprqtile 
@@ -15,7 +15,7 @@ not supported yet jiji
 yay -S hyprqtile
 ```
 
-# Usage
+# usage
 ```hyprlang
 bind = SUPER, 1, exec, hyprqtile --workspace 1
 bind = SUPER, 2, exec, hyprqtile --workspace 2
