@@ -4,7 +4,7 @@ Qtile-like workspaces and monitors management for the Hyprland compositor that u
 # installation
 ## cargo
 ```bash
-cargo install --git https://github.com/daniqss/hyprqtile --tag 0.1.0
+cargo install hyprqtile
 ```
 
 # usage
