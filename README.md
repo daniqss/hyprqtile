@@ -2,12 +2,10 @@
 Qtile-like workspaces and monitors management for the Hyprland compositor that uses hyprland-rs to communicate with the compositor's sockets. 
 
 # installation
-## cargo 
+## cargo
 ```bash
-cargo install hyprqtile 
+cargo install --git https://github.com/daniqss/hyprqtile --tag 0.1.0
 ```
-> [!WARNING]
-> Make sure that `~/.cargo/bin` is in your PATH
 
 # usage
 ```hyprlang
