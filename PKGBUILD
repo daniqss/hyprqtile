@@ -8,8 +8,9 @@ url="https://github.com/daniqss/hyprqtile"
 license=('GPL-3.0 license')
 depends=('gcc-libs' 'glibc')
 makedepends=('cargo')
-source=(""$pkgname-$pkgver.tar.gz::https://github.com/daniqss/$pkgname/archive/$pkgver.tar.gz"")
+source=("$pkgname-$pkgver.tar.gz::https://github.com/daniqss/$pkgname/archive/$pkgver.tar.gz")
 sha256sums=('SKIP')
+
 
 build() {
     cd "$pkgname-$pkgver"
