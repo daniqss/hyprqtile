@@ -7,7 +7,7 @@ Qtile-like workspaces and monitors management for the Hyprland compositor that u
 cargo install hyprqtile
 ```
 > [!WARNING]
-> Make sure that .cargo/bin is in your PATH
+> Make sure that `~/.cargo/bin` is in your PATH
 
 # usage
 ```hyprlang
