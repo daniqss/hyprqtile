@@ -1,7 +1,7 @@
 [package]
 name = "hyprqtile"
 authors = ["daniqss"]
-license = "LICENSE"
+license = "GPL-3.0"
 repository = "https://github.com/daniqss/hyprqtile"
 keywords = ["cli", "hyprland", "qtile"]
 categories = ["command-line-utilities"]
