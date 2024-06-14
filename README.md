@@ -1,5 +1,5 @@
 # hyprqtile
-![Crates.io Version](https://img.shields.io/crates/v/hyprqtile)
+![Crates.io Version](https://img.shields.io/crates/v/hyprqtile)<br><br>
 Qtile-like workspaces and monitors management for the Hyprland compositor that uses hyprland-rs to communicate with the compositor's sockets. 
 
 # installation
