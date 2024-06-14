@@ -9,10 +9,16 @@ cargo install hyprqtile
 > [!WARNING]
 > Make sure that .cargo/bin is in your PATH
 
-## aur
+## arch
+### aur
 not supported yet jiji
 ```bash
 yay -S hyprqtile
+```
+
+### manual
+```bash
+git clone https://github.com/daniqss/hyprqtile && cd hyprqtile && makepkg -si
 ```
 
 # Usage
@@ -31,5 +37,6 @@ this program satisfies my needs, but if you want to add a feature, feel free to 
 I don't use (nor understand) nix, so adding some nix magic to support it would be awesome. 
 
 # thanks to
-- @taylor85345, who made this [script](https://github.com/taylor85345/hyprland-dotfiles/blob/master/hypr/scripts/workspace) from which I take the logic
-- @donovanglover, who made [hyprnome](https://github.com/donovanglover/hyprnome/) from which I take the idea and I learn how to make a rust program that uses hyprland-rs and some clap tricks.
+- [hyprland-community](https://github.com/hyprland-community/) mainteiners, who wrote an amazing [hyprland-rs](https://github.com/hyprland-community/hyprland-rs) crate
+- [taylor85345], who made this [script](https://github.com/taylor85345/hyprland-dotfiles/blob/master/hypr/scripts/workspace) from which I take the logic
+- [donovanglover], who made [hyprnome](https://github.com/donovanglover/hyprnome/) from which I take the idea and I learn how to make a rust program that uses hyprland-rs and some clap tricks.
