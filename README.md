@@ -22,6 +22,12 @@ bind = SUPER, left, exec, hyprqtile --previous
 this program satisfies my needs, but if you want to add a feature, feel free to open a PR.
 I don't use (nor understand) nix, so adding some nix magic to support it would be awesome. 
 
+## todo
+- [ ] add tests
+- [ ] add shell completions
+- [ ] add movetoworkspace dispatcher
+- [ ] add aur
+
 # thanks to
 - [hyprland-community](https://github.com/hyprland-community/) mainteiners, who wrote an amazing [hyprland-rs](https://github.com/hyprland-community/hyprland-rs) crate
 - [taylor85345](https://github.com/taylor85345), who made this [script](https://github.com/taylor85345/hyprland-dotfiles/blob/master/hypr/scripts/workspace) from which I take the logic
