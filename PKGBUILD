@@ -11,7 +11,6 @@ makedepends=('cargo')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/daniqss/$pkgname/archive/$pkgver.tar.gz")
 sha256sums=('SKIP')
 
-
 build() {
     cd "$pkgname-$pkgver"
     cargo build --release
