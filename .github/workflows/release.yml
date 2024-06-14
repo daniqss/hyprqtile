@@ -1,12 +1,11 @@
-name: Release
-
 on:
   push:
-    tags:
-      - - 'v*.*.*'
+    branches: [ master ]
+    tags: 'v*.*.*'
 
 jobs:
   release:
+    name: Create Release
     runs-on: ubuntu-latest
 
     steps:
@@ -25,11 +24,16 @@ jobs:
         cargo publish --token $CARGO_REGISTRY_TOKEN
 
     - name: Create GitHub release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ github.ref }}
-        body: |
-          Release notes for ${{ github.ref }}
+      id: create_release
+      uses: actions/checkout@v4
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: false
