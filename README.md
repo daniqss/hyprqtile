@@ -32,6 +32,6 @@ I don't use (nor understand) nix, so adding some nix magic to support it would b
 - [ ] add aur
 
 # thanks to
-- [hyprland-community](https://github.com/hyprland-community/) mainteiners, who wrote an amazing [hyprland-rs](https://github.com/hyprland-community/hyprland-rs) crate
+- [hyprland-community](https://github.com/hyprland-community/) mainteiners, who wrote the amazing [hyprland-rs](https://github.com/hyprland-community/hyprland-rs) crate
 - [taylor85345](https://github.com/taylor85345), who made this [script](https://github.com/taylor85345/hyprland-dotfiles/blob/master/hypr/scripts/workspace) from which I take the logic
 - [donovanglover](https://github.com/donovanglover), who made [hyprnome](https://github.com/donovanglover/hyprnome/) from which I take the idea and I learn how to make a rust program that uses hyprland-rs and some clap tricks.
