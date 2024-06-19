@@ -22,6 +22,7 @@ jobs:
     - name: Create binary tarball
       run: |
         cargo install cargo-aur
+        cd /home/runner/work/hyprqtile/hyprqtile
         cargo aur
 
     - name: Publish to crates.io
@@ -41,12 +42,17 @@ jobs:
         draft: false
         prerelease: false
 
+    - name: Set VERSION env variable
+      run: |
+        cargo install toml-cli 
+        echo "VERSION=$(toml get Cargo.toml package.version)" >> $GITHUB_ENV
+
     - name: Upload release asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: /home/runner/work/hyprqtile/hyprqtile/target/cargo-aur/hyprqtile-0.1.1-x86_64.tar.gz
+        asset_path: ./target/cargo-aur/hyprqtile-${{ env.VERSION }}-x86_64.tar.gz
         asset_name: hyprqtile-bin
         asset_content_type: application/gzip

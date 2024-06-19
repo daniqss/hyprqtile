@@ -6,7 +6,7 @@ repository = "https://github.com/daniqss/hyprqtile"
 keywords = ["cli", "hyprland", "qtile"]
 categories = ["command-line-utilities"]
 description = "Qtile-like workspaces and monitors management for the Hyprland compositor"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 
 [dependencies]
