@@ -19,6 +19,11 @@ jobs:
       with:
         toolchain: stable
 
+    - name: Create binary tarball
+      run: |
+        cargo install cargo-aur
+        cargo aur
+
     - name: Publish to crates.io
       env:
         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -27,15 +32,21 @@ jobs:
 
     - name: Create GitHub release
       id: create_release
-      uses: actions/checkout@v4
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
         draft: false
         prerelease: false
+
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/cargo-aur/hyprqtile-0.1.1-x86_64.tar.gz
+        asset_name: hyprqtile-bin
+        asset_content_type: application/gzip
