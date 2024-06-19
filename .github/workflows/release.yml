@@ -54,5 +54,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/cargo-aur/hyprqtile-${{ env.VERSION }}-x86_64.tar.gz
-        asset_name: hyprqtile-bin
+        asset_name: hyprqtile-${{ env.VERSION }}-x86_64.tar.gz
         asset_content_type: application/gzip
