@@ -47,6 +47,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/cargo-aur/hyprqtile-0.1.1-x86_64.tar.gz
+        asset_path: /home/runner/work/hyprqtile/hyprqtile/target/cargo-aur/hyprqtile-0.1.1-x86_64.tar.gz
         asset_name: hyprqtile-bin
         asset_content_type: application/gzip

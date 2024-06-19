@@ -1,6 +1,6 @@
 # Maintainer: daniqss <danielqueijo14@gmail.com>
 pkgname=hyprqtile-bin
-pkgver=0.1.1
+pkgver=0.1.4
 pkgrel=1
 pkgdesc="Qtile-like workspaces and monitors management for Hyprland"
 url="https://github.com/daniqss/hyprqtile"
