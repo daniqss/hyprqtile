@@ -45,7 +45,7 @@ jobs:
     - name: Set VERSION env variable
       run: |
         cargo install toml-cli 
-        echo "VERSION=$(toml get Cargo.toml package.version)" >> $GITHUB_ENV
+        echo "VERSION=$(toml get Cargo.toml package.version | tr -d '\"')" >> $GITHUB_ENV
 
     - name: Upload release asset
       uses: actions/upload-release-asset@v1
