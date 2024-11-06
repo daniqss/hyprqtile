@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use clap::Args;
-use hyprqtile::{move_to, move_to_next, move_to_previous};
+use hyprqtile::{get_current_workspace, move_to};
 
 /// Moves to the specified workspace, with Qtile monitor behavior
 #[derive(Args, Debug)]
@@ -19,13 +19,25 @@ pub struct WorkspaceCommand {
 impl WorkspaceCommand {
     pub fn command(self) -> Result<()> {
         match self {
-            Self {
-                workspace: Some(workspace),
-                ..
-            } => move_to(workspace),
-            Self { previous: true, .. } => move_to_previous(),
-            Self { next: true, .. } => move_to_next(),
+            #[rustfmt::skip]
+            Self { workspace: Some(workspace), .. } => move_to(workspace),
+            Self { previous: true, .. } => self.move_to_previous(),
+            Self { next: true, .. } => self.move_to_next(),
             _ => Ok(()),
+        }
+    }
+
+    fn move_to_previous(self) -> Result<()> {
+        match get_current_workspace() {
+            Ok(workspace) => move_to(workspace - 1),
+            Err(hypr_error) => Err(hypr_error),
+        }
+    }
+
+    fn move_to_next(self) -> Result<()> {
+        match get_current_workspace() {
+            Ok(workspace) => move_to(workspace + 1),
+            Err(hypr_error) => Err(hypr_error),
         }
     }
 }
