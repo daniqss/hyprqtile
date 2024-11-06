@@ -7,14 +7,14 @@ use hyprland::dispatch::{
 use hyprland::prelude::*;
 use hyprland::Result;
 
-pub struct MonitorsResult {
+struct MonitorsResult {
     pub active_monitor: i128,
     pub passive_monitor: Option<i128>,
     pub monitors: Vec<Monitor>,
 }
 
 impl MonitorsResult {
-    pub fn get(workspace_id: i32) -> Result<Self> {
+    fn get(workspace_id: i32) -> Result<Self> {
         let monitors = Monitors::get()?.to_vec();
         let mut active_monitor = 1;
         let mut passive_monitor = None;

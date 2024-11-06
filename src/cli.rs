@@ -1,4 +1,6 @@
-use clap::{Args, Parser, Subcommand};
+use crate::minimize::MinimizeCommand;
+use crate::workspace::WorkspaceCommand;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -12,31 +14,12 @@ pub struct HyprQtileArgs {
 
 #[derive(Subcommand, Debug)]
 pub enum HyprQtileCommand {
-    /// Moves to the specified workspace
+    /// Moves to the specified workspace, with Qtile monitor behavior
+    #[command(arg_required_else_help = true)]
     Workspace(WorkspaceCommand),
     /// Minimizes the specified window
+    #[command(arg_required_else_help = true)]
     Minimize(MinimizeCommand),
-}
-
-#[derive(Args, Debug)]
-pub struct WorkspaceCommand {
-    /// The workspace to move to
-    pub workspace: Option<i32>,
-    /// Moves to the previous workspace
-    #[arg(short, long, conflicts_with("workspace"), conflicts_with("next"))]
-    pub previous: bool,
-    /// Moves to the next workspace
-    #[arg(short, long, conflicts_with("workspace"), conflicts_with("previous"))]
-    pub next: bool,
-}
-
-#[derive(Args, Debug)]
-pub struct MinimizeCommand {
-    /// The window identifier to minimize
-    pub window_identifier: Option<String>,
-    /// Minimizes the active window
-    #[arg(short, long)]
-    pub active: bool,
 }
 
 impl HyprQtileArgs {
