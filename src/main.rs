@@ -1,4 +1,3 @@
-mod cli;
 mod minimize;
 mod prelude;
 mod workspace;
