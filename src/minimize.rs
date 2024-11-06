@@ -1,7 +1,9 @@
 use crate::prelude::*;
 use clap::Args;
 
+/// Minimizes the specified window
 #[derive(Args, Debug)]
+#[command(arg_required_else_help = true)]
 pub struct MinimizeCommand {
     /// Toggle to the workspace special's
     #[arg(short, long, conflicts_with = "all", conflicts_with = "active")]

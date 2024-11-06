@@ -2,7 +2,9 @@ use crate::prelude::*;
 use clap::Args;
 use hyprqtile::{move_to, move_to_next, move_to_previous};
 
+/// Moves to the specified workspace, with Qtile monitor behavior
 #[derive(Args, Debug)]
+#[command(arg_required_else_help = true)]
 pub struct WorkspaceCommand {
     /// The workspace to move to
     pub workspace: Option<i32>,
