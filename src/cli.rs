@@ -1,4 +1,4 @@
-use clap::{ArgAction, Parser};
+use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -6,17 +6,37 @@ use clap::{ArgAction, Parser};
     arg_required_else_help = true
 )]
 pub struct HyprQtileArgs {
+    #[command(subcommand)]
+    pub command: HyprQtileCommand,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum HyprQtileCommand {
     /// Moves to the specified workspace
-    #[arg(short, long, conflicts_with = "next", conflicts_with = "previous")]
+    Workspace(WorkspaceCommand),
+    /// Minimizes the specified window
+    Minimize(MinimizeCommand),
+}
+
+#[derive(Args, Debug)]
+pub struct WorkspaceCommand {
+    /// The workspace to move to
     pub workspace: Option<i32>,
-
     /// Moves to the previous workspace
-    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspace", conflicts_with = "next")]
+    #[arg(short, long)]
     pub previous: bool,
-
     /// Moves to the next workspace
-    #[arg(short, long, action = ArgAction::SetTrue, conflicts_with = "workspace", conflicts_with = "previous")]
+    #[arg(short, long)]
     pub next: bool,
+}
+
+#[derive(Args, Debug)]
+pub struct MinimizeCommand {
+    /// The window identifier to minimize
+    pub window_identifier: Option<String>,
+    /// Minimizes the active window
+    #[arg(short, long)]
+    pub active: bool,
 }
 
 impl HyprQtileArgs {
