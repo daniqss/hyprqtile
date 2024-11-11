@@ -1,13 +1,14 @@
-use hyprland::data::*;
+use hyprland::data::{Workspace as WS, *};
 use hyprland::dispatch::{
     Dispatch, DispatchType as DT, MonitorIdentifier, WorkspaceIdentifier,
     WorkspaceIdentifierWithSpecial,
 };
 
 use hyprland::prelude::*;
+use hyprland::shared::Address;
 use hyprland::Result;
 
-struct MonitorsResult {
+pub struct MonitorsResult {
     pub active_monitor: i128,
     pub passive_monitor: Option<i128>,
     pub monitors: Vec<Monitor>,
@@ -37,7 +38,12 @@ impl MonitorsResult {
     }
 }
 
-pub fn move_to(workspace_id: i32) -> Result<()> {
+pub enum Workspace {
+    Id(i32),
+    Special(i32),
+}
+
+pub fn move_workspace_to(workspace_id: i32) -> Result<()> {
     let monitors = MonitorsResult::get(workspace_id)?;
 
     if monitors.monitors.len() == 1 {
@@ -56,8 +62,36 @@ pub fn move_to(workspace_id: i32) -> Result<()> {
     Ok(())
 }
 
+pub fn toggle_special_workspace() -> Result<()> {
+    Dispatch::call(DT::ToggleSpecialWorkspace(match get_current_workspace() {
+        Ok(workspace) => Some(workspace.to_string()),
+        Err(_) => None,
+    }))
+}
+
+pub fn move_window(workspace: Workspace, window_address: Option<String>) -> Result<()> {
+    Dispatch::call(DT::MoveToWorkspaceSilent(
+        match workspace {
+            Workspace::Id(id) => WorkspaceIdentifierWithSpecial::Id(id),
+            Workspace::Special(special) => {
+                let special_string = special.to_string();
+                // we are forced to leak the string because it wants a static string slice
+                WorkspaceIdentifierWithSpecial::Special(Some(Box::leak(
+                    special_string.into_boxed_str(),
+                )))
+            }
+        },
+        match window_address {
+            Some(address) => Some(hyprland::dispatch::WindowIdentifier::Address(Address::new(
+                address,
+            ))),
+            None => None,
+        },
+    ))
+}
+
 pub fn get_current_workspace() -> Result<i32> {
-    let workspace = Workspace::get_active()?.id;
+    let workspace = WS::get_active()?.id;
     Ok(workspace)
 }
 

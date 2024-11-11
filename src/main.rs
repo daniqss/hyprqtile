@@ -1,9 +1,13 @@
+mod maximize;
 mod minimize;
 mod prelude;
+mod toggle;
 mod workspace;
 use prelude::*;
 
+use crate::maximize::MaximizeCommand;
 use crate::minimize::MinimizeCommand;
+use crate::toggle::ToggleCommand;
 use crate::workspace::WorkspaceCommand;
 use clap::{Parser, Subcommand};
 
@@ -13,6 +17,8 @@ fn main() -> Result<()> {
     match args.command {
         HyprQtileCommand::Workspace(workspace) => workspace.command(),
         HyprQtileCommand::Minimize(minimaze) => minimaze.command(),
+        HyprQtileCommand::Maximize(maximize) => maximize.command(),
+        HyprQtileCommand::Toggle(toggle) => toggle.command(),
     }
 }
 
@@ -29,7 +35,9 @@ pub struct HyprQtileArgs {
 #[derive(Subcommand, Debug)]
 pub enum HyprQtileCommand {
     Workspace(WorkspaceCommand),
+    Toggle(ToggleCommand),
     Minimize(MinimizeCommand),
+    Maximize(MaximizeCommand),
 }
 
 impl HyprQtileArgs {
