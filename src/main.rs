@@ -25,7 +25,8 @@ fn main() -> Result<()> {
 #[derive(Parser, Debug)]
 #[command(
     about = "Qtile-like workspaces and monitors management for the Hyprland compositor",
-    arg_required_else_help = true
+    arg_required_else_help = true,
+    version
 )]
 pub struct HyprQtileArgs {
     #[command(subcommand)]
