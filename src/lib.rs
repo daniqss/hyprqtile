@@ -69,16 +69,23 @@ pub fn toggle_special_workspace() -> Result<()> {
     }))
 }
 
-pub fn move_window(workspace: Workspace, window_address: Option<String>) -> Result<()> {
+pub fn get_workspaces_windows_addresses() -> Result<Vec<String>> {
+    let workspace = get_current_workspace()?;
+    Ok(Clients::get()?
+        .iter()
+        .filter(|c| c.workspace.id == workspace)
+        .map(|c| c.address.to_string())
+        .collect())
+}
+
+pub fn move_window(workspace: Workspace, window_address: Option<&String>) -> Result<()> {
     Dispatch::call(DT::MoveToWorkspaceSilent(
         match workspace {
             Workspace::Id(id) => WorkspaceIdentifierWithSpecial::Id(id),
             Workspace::Special(special) => {
-                let special_string = special.to_string();
                 // we are forced to leak the string because it wants a static string slice
-                WorkspaceIdentifierWithSpecial::Special(Some(Box::leak(
-                    special_string.into_boxed_str(),
-                )))
+                let leaked_string: &'static str = Box::leak(special.to_string().into_boxed_str());
+                WorkspaceIdentifierWithSpecial::Special(Some(leaked_string))
             }
         },
         match window_address {

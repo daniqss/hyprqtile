@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use clap::Args;
-use hyprqtile::{get_current_workspace, move_window, Workspace};
+use hyprqtile::{get_current_workspace, get_workspaces_windows_addresses, move_window, Workspace};
 
 /// Minimizes the specified window
 #[derive(Args, Debug)]
@@ -24,13 +24,14 @@ impl MinimizeCommand {
     }
 
     fn active(self) -> Result<()> {
-        match get_current_workspace() {
-            Ok(workspace) => move_window(Workspace::Special(workspace), None),
-            Err(hypr_error) => Err(hypr_error),
-        }
+        let workspace = get_current_workspace()?;
+        move_window(Workspace::Special(workspace), None)
     }
 
     fn all(self) -> Result<()> {
-        Ok(())
+        let workspace = get_current_workspace()?;
+        get_workspaces_windows_addresses()?
+            .iter()
+            .try_for_each(|window| move_window(Workspace::Special(workspace), Some(window)))
     }
 }
