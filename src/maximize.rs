@@ -25,13 +25,13 @@ impl MaximizeCommand {
 
     fn active(self) -> Result<()> {
         let workspace = get_current_workspace()?;
-        move_window(Workspace::Special(workspace), None)
+        move_window(Workspace::Id(workspace), None)
     }
 
     fn all(self) -> Result<()> {
         let workspace = get_current_workspace()?;
         get_workspaces_windows_addresses()?
             .iter()
-            .try_for_each(|window| move_window(Workspace::Special(workspace), Some(window)))
+            .try_for_each(|window| move_window(Workspace::Id(workspace), Some(window)))
     }
 }
