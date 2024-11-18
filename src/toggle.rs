@@ -14,7 +14,7 @@ impl ToggleCommand {
 
 #[cfg(test)]
 mod tests {
-    use hyprqtile::commands::ToggleCommand;
+    use super::ToggleCommand;
     use serde_json::{from_slice, Value};
 
     #[test]
