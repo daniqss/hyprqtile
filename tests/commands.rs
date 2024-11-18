@@ -1,24 +1,13 @@
-use clap::Args;
-use hyprqtile::toggle_special_workspace;
-use hyprqtile::Result;
-
-/// Toggle from the current workspace to its special workspace
-#[derive(Args, Debug)]
-#[command()]
-pub struct ToggleCommand {}
-impl ToggleCommand {
-    pub fn command(self) -> Result<()> {
-        toggle_special_workspace()
-    }
-}
-
-#[cfg(test)]
+#[cfg(feature = "tests")]
 mod tests {
-    use super::ToggleCommand;
+    use hyprqtile::{
+        commands::{MaximizeCommand, MinimizeCommand, ToggleCommand, WorkspaceCommand},
+        prelude::*,
+    };
     use serde_json::{from_slice, Value};
 
     #[test]
-    fn test_toggle_command() -> core::result::Result<(), Box<dyn std::error::Error>> {
+    fn test_toggle_command() -> Result<()> {
         let initial_response: Value = match std::process::Command::new("hyprctl")
             .arg("activewindow")
             .arg("-j")
@@ -51,10 +40,14 @@ mod tests {
             Err(error) => return Err(error.into()),
         };
 
-        let new_name = new_response["workspace"]["name"]
-            .as_str()
-            .unwrap()
-            .to_string();
+        let new_name = match new_response["workspace"]["name"].as_str() {
+            Some(name) => name.to_string(),
+            None => {
+                return Err(Error::Generic(
+                    "No active window in the special name found".to_string(),
+                ))
+            }
+        };
 
         debug_assert!(new_name.contains(&initial_name));
 

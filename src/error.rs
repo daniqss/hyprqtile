@@ -9,4 +9,8 @@ pub enum Error {
 
     #[error(transparent)]
     Io(#[from] std::io::Error),
+
+    #[cfg(feature = "tests")]
+    #[error(transparent)]
+    SerdeJson(#[from] serde_json::Error),
 }

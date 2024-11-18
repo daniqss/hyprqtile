@@ -1,6 +1,8 @@
+use crate::{
+    ipc::{get_current_workspace, move_workspace_to},
+    prelude::*,
+};
 use clap::Args;
-use hyprqtile::Result;
-use hyprqtile::{get_current_workspace, move_workspace_to};
 
 /// Moves to the specified workspace, with Qtile monitor behavior
 #[derive(Args, Debug)]

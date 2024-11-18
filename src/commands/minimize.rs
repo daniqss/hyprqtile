@@ -1,8 +1,10 @@
-use clap::Args;
-use hyprqtile::Result;
-use hyprqtile::{
-    get_active_workspace_windows_addresses, get_current_workspace_id, move_window, Workspace,
+use crate::{
+    ipc::{
+        get_active_workspace_windows_addresses, get_current_workspace_id, move_window, Workspace,
+    },
+    prelude::*,
 };
+use clap::Args;
 
 /// Minimizes the specified window
 #[derive(Args, Debug)]

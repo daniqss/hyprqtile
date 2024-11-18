@@ -1,21 +1,11 @@
-mod error;
-mod maximize;
-mod minimize;
-mod prelude;
-mod toggle;
-mod workspace;
-use hyprqtile::Result;
-
-use crate::maximize::MaximizeCommand;
-use crate::minimize::MinimizeCommand;
-use crate::toggle::ToggleCommand;
-use crate::workspace::WorkspaceCommand;
 use clap::{Parser, Subcommand};
+use hyprqtile::{
+    commands::{MaximizeCommand, MinimizeCommand, ToggleCommand, WorkspaceCommand},
+    prelude::*,
+};
 
 fn main() -> Result<()> {
-    let args = HyprQtileArgs::parse_args();
-
-    match args.command {
+    match HyprQtileArgs::parse_args().command {
         HyprQtileCommand::Workspace(workspace) => workspace.command(),
         HyprQtileCommand::Minimize(minimaze) => minimaze.command(),
         HyprQtileCommand::Maximize(maximize) => maximize.command(),
