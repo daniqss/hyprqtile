@@ -29,14 +29,14 @@ impl WorkspaceCommand {
 
     fn move_to_previous(self) -> Result<()> {
         match get_current_workspace() {
-            Ok(workspace) => move_workspace_to(workspace - 1),
+            Ok(workspace) => move_workspace_to(Into::<i32>::into(workspace) - 1),
             Err(hypr_error) => Err(hypr_error),
         }
     }
 
     fn move_to_next(self) -> Result<()> {
         match get_current_workspace() {
-            Ok(workspace) => move_workspace_to(workspace + 1),
+            Ok(workspace) => move_workspace_to(Into::<i32>::into(workspace) + 1),
             Err(hypr_error) => Err(hypr_error),
         }
     }

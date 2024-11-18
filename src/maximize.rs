@@ -1,6 +1,8 @@
 use crate::prelude::*;
 use clap::Args;
-use hyprqtile::{get_current_workspace, get_workspaces_windows_addresses, move_window, Workspace};
+use hyprqtile::{
+    get_active_workspace_windows_addresses, get_current_workspace_id, move_window, Workspace,
+};
 
 /// Maximizes the specified window
 #[derive(Args, Debug)]
@@ -24,13 +26,13 @@ impl MaximizeCommand {
     }
 
     fn active(self) -> Result<()> {
-        let workspace = get_current_workspace()?;
+        let workspace = get_current_workspace_id()?;
         move_window(Workspace::Id(workspace), None)
     }
 
     fn all(self) -> Result<()> {
-        let workspace = get_current_workspace()?;
-        get_workspaces_windows_addresses()?
+        let workspace = get_current_workspace_id()?;
+        get_active_workspace_windows_addresses()?
             .iter()
             .try_for_each(|window| move_window(Workspace::Id(workspace), Some(window)))
     }

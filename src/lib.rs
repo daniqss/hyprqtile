@@ -1,4 +1,6 @@
-use hyprland::data::{Workspace as WS, *};
+use std::fmt::Display;
+
+use hyprland::data::{Client, Clients, Monitor, Monitors};
 use hyprland::dispatch::{
     Dispatch, DispatchType as DT, MonitorIdentifier, WorkspaceIdentifier,
     WorkspaceIdentifierWithSpecial,
@@ -38,9 +40,37 @@ impl MonitorsResult {
     }
 }
 
+#[derive(Clone, Debug)]
 pub enum Workspace {
     Id(i32),
     Special(i32),
+}
+
+impl Into<i32> for Workspace {
+    fn into(self) -> i32 {
+        match self {
+            Workspace::Id(id) => id,
+            Workspace::Special(id) => id,
+        }
+    }
+}
+
+impl Into<String> for Workspace {
+    fn into(self) -> String {
+        match self {
+            Workspace::Id(id) => id.to_string(),
+            Workspace::Special(id) => id.to_string(),
+        }
+    }
+}
+
+impl Display for Workspace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Workspace::Id(id) => write!(f, "{}", id),
+            Workspace::Special(id) => write!(f, "{}", id),
+        }
+    }
 }
 
 pub fn move_workspace_to(workspace_id: i32) -> Result<()> {
@@ -52,14 +82,10 @@ pub fn move_workspace_to(workspace_id: i32) -> Result<()> {
 
     match monitors.passive_monitor {
         Some(passive_monitor_id) => {
-            swap_active_workspace(monitors.active_monitor, passive_monitor_id)?;
+            swap_active_workspace(monitors.active_monitor, passive_monitor_id)
         }
-        None => {
-            switch_to_workspace(workspace_id, Some(monitors.active_monitor))?;
-        }
+        None => switch_to_workspace(workspace_id, Some(monitors.active_monitor)),
     }
-
-    Ok(())
 }
 
 pub fn toggle_special_workspace() -> Result<()> {
@@ -69,13 +95,17 @@ pub fn toggle_special_workspace() -> Result<()> {
     }))
 }
 
-pub fn get_workspaces_windows_addresses() -> Result<Vec<String>> {
+pub fn get_active_workspace_windows_addresses() -> Result<Vec<String>> {
     let workspace = get_current_workspace()?;
     Ok(Clients::get()?
         .iter()
-        .filter(|c| c.workspace.id == workspace)
+        .filter(|c| c.workspace.id == Into::<i32>::into(workspace.clone()))
         .map(|c| c.address.to_string())
         .collect())
+}
+
+pub fn reset_submap() -> Result<()> {
+    Dispatch::call(DT::Custom("submap", "reset"))
 }
 
 pub fn move_window(workspace: Workspace, window_address: Option<&String>) -> Result<()> {
@@ -97,16 +127,28 @@ pub fn move_window(workspace: Workspace, window_address: Option<&String>) -> Res
     ))
 }
 
-pub fn get_current_workspace() -> Result<i32> {
-    let workspace = WS::get_active()?.id;
-    Ok(workspace)
+pub fn get_current_workspace_id() -> Result<i32> {
+    let active_window = Client::get_active()?;
+    match active_window {
+        Some(window) => Ok(window.workspace.id),
+        None => Err(hyprland::shared::HyprError::other(
+            "Cannot get current window",
+        )),
+    }
+}
+
+pub fn get_current_workspace() -> Result<Workspace> {
+    let workspace_id = get_current_workspace_id()?;
+    match workspace_id < 0 {
+        true => Ok(Workspace::Special(workspace_id)),
+        false => Ok(Workspace::Id(workspace_id)),
+    }
 }
 
 pub fn swap_active_workspace(active_monitor_id: i128, passive_monitor_id: i128) -> Result<()> {
     let active_monitor = MonitorIdentifier::Id(active_monitor_id);
     let passive_monitor = MonitorIdentifier::Id(passive_monitor_id);
-    Dispatch::call(DT::SwapActiveWorkspaces(active_monitor, passive_monitor))?;
-    Ok(())
+    Dispatch::call(DT::SwapActiveWorkspaces(active_monitor, passive_monitor))
 }
 
 pub fn switch_to_workspace(workspace_id: i32, active_monitor_id: Option<i128>) -> Result<()> {
@@ -116,6 +158,13 @@ pub fn switch_to_workspace(workspace_id: i32, active_monitor_id: Option<i128>) -
         let active_monitor = MonitorIdentifier::Id(active_monitor_id);
         Dispatch::call(DT::MoveWorkspaceToMonitor(workspace, active_monitor))?;
     }
-    Dispatch::call(DT::Workspace(workspace))?;
-    Ok(())
+    match Dispatch::call(DT::Workspace(workspace)) {
+        Ok(_) => Ok(()),
+        Err(_) => {
+            // If the workspace doesn't exist (non windows in it unless it's configured as persistent)
+            // it will return an error, but the call create the workspace and switch to it
+            // so we can ignore the error
+            Ok(())
+        }
+    }
 }
