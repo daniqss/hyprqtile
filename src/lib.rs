@@ -1,14 +1,14 @@
-use std::fmt::Display;
-
 use hyprland::data::{Client, Clients, Monitor, Monitors};
 use hyprland::dispatch::{
     Dispatch, DispatchType as DT, MonitorIdentifier, WorkspaceIdentifier,
     WorkspaceIdentifierWithSpecial,
 };
+use hyprland::shared::{Address, HyprData, HyprDataActiveOptional as _, HyprDataVec};
+use std::fmt::Display;
 
-use hyprland::prelude::*;
-use hyprland::shared::Address;
-use hyprland::Result;
+pub mod error;
+pub mod prelude;
+pub use prelude::*;
 
 pub struct MonitorsResult {
     pub active_monitor: i128,
@@ -89,10 +89,12 @@ pub fn move_workspace_to(workspace_id: i32) -> Result<()> {
 }
 
 pub fn toggle_special_workspace() -> Result<()> {
-    Dispatch::call(DT::ToggleSpecialWorkspace(match get_current_workspace() {
-        Ok(workspace) => Some(workspace.to_string()),
-        Err(_) => None,
-    }))
+    Ok(Dispatch::call(DT::ToggleSpecialWorkspace(
+        match get_current_workspace() {
+            Ok(workspace) => Some(workspace.to_string()),
+            Err(_) => None,
+        },
+    ))?)
 }
 
 pub fn get_active_workspace_windows_addresses() -> Result<Vec<String>> {
@@ -105,11 +107,11 @@ pub fn get_active_workspace_windows_addresses() -> Result<Vec<String>> {
 }
 
 pub fn reset_submap() -> Result<()> {
-    Dispatch::call(DT::Custom("submap", "reset"))
+    Ok(Dispatch::call(DT::Custom("submap", "reset"))?)
 }
 
 pub fn move_window(workspace: Workspace, window_address: Option<&String>) -> Result<()> {
-    Dispatch::call(DT::MoveToWorkspaceSilent(
+    Ok(Dispatch::call(DT::MoveToWorkspaceSilent(
         match workspace {
             Workspace::Id(id) => WorkspaceIdentifierWithSpecial::Id(id),
             Workspace::Special(special) => {
@@ -124,16 +126,14 @@ pub fn move_window(workspace: Workspace, window_address: Option<&String>) -> Res
             ))),
             None => None,
         },
-    ))
+    ))?)
 }
 
 pub fn get_current_workspace_id() -> Result<i32> {
     let active_window = Client::get_active()?;
     match active_window {
         Some(window) => Ok(window.workspace.id),
-        None => Err(hyprland::shared::HyprError::other(
-            "Cannot get current window",
-        )),
+        None => Err(Error::Generic("No active window".to_string())),
     }
 }
 
@@ -148,7 +148,10 @@ pub fn get_current_workspace() -> Result<Workspace> {
 pub fn swap_active_workspace(active_monitor_id: i128, passive_monitor_id: i128) -> Result<()> {
     let active_monitor = MonitorIdentifier::Id(active_monitor_id);
     let passive_monitor = MonitorIdentifier::Id(passive_monitor_id);
-    Dispatch::call(DT::SwapActiveWorkspaces(active_monitor, passive_monitor))
+    Ok(Dispatch::call(DT::SwapActiveWorkspaces(
+        active_monitor,
+        passive_monitor,
+    ))?)
 }
 
 pub fn switch_to_workspace(workspace_id: i32, active_monitor_id: Option<i128>) -> Result<()> {

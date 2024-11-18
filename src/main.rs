@@ -1,9 +1,10 @@
+mod error;
 mod maximize;
 mod minimize;
 mod prelude;
 mod toggle;
 mod workspace;
-use prelude::*;
+use hyprqtile::Result;
 
 use crate::maximize::MaximizeCommand;
 use crate::minimize::MinimizeCommand;

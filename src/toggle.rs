@@ -1,6 +1,6 @@
-use crate::prelude::*;
 use clap::Args;
 use hyprqtile::toggle_special_workspace;
+use hyprqtile::Result;
 
 /// Toggle from the current workspace to its special workspace
 #[derive(Args, Debug)]

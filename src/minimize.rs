@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use clap::Args;
+use hyprqtile::Result;
 use hyprqtile::{
     get_active_workspace_windows_addresses, get_current_workspace_id, move_window, Workspace,
 };
