@@ -1,17 +1,16 @@
 #[cfg(feature = "tests")]
 mod tests {
-    use std::collections::HashSet;
-
     use hyprqtile::{
         commands::{MaximizeCommand, MinimizeCommand, ToggleCommand, WorkspaceCommand},
         prelude::*,
     };
     use serde_json::{from_slice, Value};
-    type Address = String;
+    use std::{collections::HashSet, thread::sleep, time::Duration};
+    const MILLIS_TO_WAIT: u64 = 200;
 
     fn exec(args: &str) -> Result<Vec<u8>> {
         match std::process::Command::new("hyprctl")
-            .args(args.lines())
+            .args(args.split(' '))
             .output()
         {
             Ok(output) => Ok(output.stdout),
@@ -19,21 +18,21 @@ mod tests {
         }
     }
 
-    fn parse(raw: Vec<u8>) -> Result<Value> {
-        println!("hola desde parse");
-        let value = match from_slice(&raw) {
-            Ok(value) => value,
-            Err(error) => return Err(Error::SerdeJson(error)),
-        };
-        println!("hola desde despues de parse");
-        Ok(value)
+    fn parse(raw: &Vec<u8>) -> Result<Value> {
+        match from_slice(raw) {
+            Ok(value) => Ok(value),
+            Err(error) => Err(Error::SerdeJson(error)),
+        }
     }
 
-    fn create_window() -> Result<Address> {
-        let Some(old_clients) = parse(exec("clients -j")?)?.as_array().cloned() else {
-            return Err(Error::Generic("No clients found".to_string()));
+    fn create_window() -> Result<String> {
+        let Some(old_clients) = parse(&exec("clients -j")?)?.as_array().cloned() else {
+            return Err(Error::Generic("No old clients found".to_string()));
         };
-        let old_clients: HashSet<&Value> = old_clients.iter().collect();
+        let old_clients: HashSet<String> = old_clients
+            .iter()
+            .map(|c| c["address"].to_string())
+            .collect();
 
         exec(
             format!(
@@ -43,52 +42,97 @@ mod tests {
             )
             .as_str(),
         )?;
-        let Some(new_clients) = parse(exec("clients -j")?)?.as_array().cloned() else {
-            return Err(Error::Generic("No clients found".to_string()));
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
+
+        let Some(new_clients) = parse(&exec("clients -j")?)?.as_array().cloned() else {
+            return Err(Error::Generic("No new clients found".to_string()));
         };
-        let new_clients: HashSet<&Value> = new_clients.iter().collect();
-        let differences: Vec<_> = new_clients.difference(&old_clients).cloned().collect();
+        let new_clients: HashSet<String> = new_clients
+            .iter()
+            .map(|c| c["address"].to_string())
+            .collect();
+
+        let differences: Vec<String> = new_clients.difference(&old_clients).cloned().collect();
         if differences.len() != 1 {
-            return Err(Error::Generic("No new client found".to_string()));
+            return Err(Error::Generic(format!(
+                "No clients found:\n{:?}",
+                differences
+            )));
         }
-        match differences[0]["address"].as_str() {
-            Some(address) => Ok(address.to_string()),
-            None => Err(Error::Generic(
-                "Error getting founded new client address".to_string(),
-            )),
+
+        match differences.into_iter().next() {
+            Some(address) => Ok(address.chars().filter(|c| *c != '"').collect()),
+            None => Err(Error::Generic("No clients found".to_string())),
         }
     }
 
-    fn move_window_to(workspace: String, address: &Address) -> Result<()> {
-        exec(format!("movetoworkspacesilent {},{}", workspace, address).as_str())?;
-        Ok(())
+    fn move_window_to(workspace: String, address: &String) -> Result<()> {
+        let message = format!(
+            "dispatch movetoworkspacesilent {},address:{}",
+            workspace, address
+        );
+        println!("{}", message);
+        match exec(message.as_str()) {
+            Ok(output) => {
+                println!("Moved window to workspace: {:?}", String::from_utf8(output));
+                Ok(())
+            }
+            Err(_) => Err(Error::Generic(format!(
+                "Failed to move window to workspace: {}",
+                message
+            ))),
+        }
     }
 
     #[test]
     fn test_toggle_command() -> Result<()> {
-        println!("hola wei");
         let _window_in_normal = create_window()?;
         let window_in_special = create_window()?;
 
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
         // Get the initial workspace name
-        let initial_name = parse(exec("activewindow -j")?)?["workspace"]["name"]
-            .as_str()
-            .ok_or(Error::Generic("No workspace name found".to_string()))?
-            .to_string();
+        let initial_workspace = match parse(&exec("activewindow -j")?) {
+            Ok(value) => match value["workspace"]["name"].as_str() {
+                Some(name) => name.to_string(),
+                None => {
+                    return Err(Error::Generic(format!(
+                        "No workspace name found: {:?}",
+                        value
+                    )))
+                }
+            },
 
+            Err(error) => return Err(error),
+        };
+
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
         // Move the window to the special workspace to check workspace toggling
-        move_window_to(format!("special:{}", initial_name), &window_in_special)?;
         // Toggle to the special workspace
-        let toggle_command = ToggleCommand {};
-        toggle_command.command()?;
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
+        ToggleCommand {}.command()?;
+
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
+        move_window_to(format!("special:{}", initial_workspace), &window_in_special)?;
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
+        exec("dispatch movecursor 960 550")?;
+        sleep(Duration::from_millis(MILLIS_TO_WAIT));
 
         // Get the new workspace name
-        let new_name = parse(exec("activewindow -j")?)?["workspace"]["name"]
-            .as_str()
-            .ok_or(Error::Generic("No workspace name found".to_string()))?
-            .to_string();
+        let new_workspace = match parse(&exec("activewindow -j")?) {
+            Ok(value) => match value["workspace"]["name"].as_str() {
+                Some(name) => name.to_string(),
+                None => {
+                    return Err(Error::Generic(format!(
+                        "No workspace name found: {:?}",
+                        value
+                    )))
+                }
+            },
 
-        debug_assert!(new_name.contains(&initial_name));
+            Err(error) => return Err(error),
+        };
+
+        debug_assert!(new_workspace.contains(&initial_workspace));
 
         Ok(())
     }
