@@ -3,7 +3,7 @@ use hyprland::dispatch::{
     Dispatch, DispatchType as DT, MonitorIdentifier, WorkspaceIdentifier,
     WorkspaceIdentifierWithSpecial,
 };
-use hyprland::shared::{Address, HyprData, HyprDataActiveOptional as _, HyprDataVec};
+use hyprland::shared::{Address, HyprData, HyprDataActiveOptional as _, HyprDataVec, HyprError};
 use std::fmt::Display;
 
 use crate::prelude::*;
@@ -131,7 +131,7 @@ pub fn get_current_workspace_id() -> Result<i32> {
     let active_window = Client::get_active()?;
     match active_window {
         Some(window) => Ok(window.workspace.id),
-        None => Err(Error::Generic("No active window".to_string())),
+        None => Err(Error::Hyprland(HyprError::other("No active window"))),
     }
 }
 
