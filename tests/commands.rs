@@ -86,7 +86,6 @@ mod tests {
 
     #[test]
     fn test_toggle_command() -> Result<()> {
-        let _window_in_normal = create_window()?;
         let window_in_special = create_window()?;
 
         sleep(Duration::from_millis(MILLIS_TO_WAIT));
@@ -108,13 +107,11 @@ mod tests {
         sleep(Duration::from_millis(MILLIS_TO_WAIT));
         // Move the window to the special workspace to check workspace toggling
         // Toggle to the special workspace
-        sleep(Duration::from_millis(MILLIS_TO_WAIT));
-        ToggleCommand {}.command()?;
 
         sleep(Duration::from_millis(MILLIS_TO_WAIT));
         move_window_to(format!("special:{}", initial_workspace), &window_in_special)?;
         sleep(Duration::from_millis(MILLIS_TO_WAIT));
-        exec("dispatch movecursor 960 550")?;
+        ToggleCommand {}.command()?;
         sleep(Duration::from_millis(MILLIS_TO_WAIT));
 
         // Get the new workspace name
