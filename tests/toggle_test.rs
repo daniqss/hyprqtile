@@ -50,5 +50,10 @@ fn test_toggle_command() -> Result<()> {
 
     debug_assert!(new_workspace.contains(&initial_workspace));
 
+    // Clean up
+    kill_window(window_in_special)?;
+    sleep(Duration::from_millis(MILLIS_TO_WAIT));
+    debug_assert!(initial_workspace != new_workspace);
+
     Ok(())
 }

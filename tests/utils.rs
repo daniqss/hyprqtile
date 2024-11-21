@@ -79,3 +79,13 @@ pub fn move_window_to(workspace: String, address: &String) -> Result<()> {
         ))),
     }
 }
+
+pub fn kill_window(address: String) -> Result<()> {
+    match exec(format!("dispatch closewindow address:{}", address).as_str()) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(Error::Generic(format!(
+            "Failed to kill window: {}",
+            address
+        ))),
+    }
+}

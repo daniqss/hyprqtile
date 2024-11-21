@@ -73,5 +73,9 @@ fn test_minimize_active_command() -> Result<()> {
 
     debug_assert!(destiny_workspace.contains(&initial_workspace));
 
+    // clean up
+    kill_window(new_window)?;
+    debug_assert!(initial_workspace != destiny_workspace);
+
     Ok(())
 }
