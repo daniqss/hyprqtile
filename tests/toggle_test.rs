@@ -7,8 +7,8 @@ use utils::*;
 fn test_toggle_command() -> Result<()> {
     // create window that we'll use to get data
     let window_in_special = create_window()?;
-
     sleep(Duration::from_millis(MILLIS_TO_WAIT));
+
     // Get the initial workspace name using the window we created
     let initial_workspace = match parse(&exec("activewindow -j")?) {
         Ok(value) => match value["workspace"]["name"].as_str() {
