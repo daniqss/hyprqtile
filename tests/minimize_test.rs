@@ -1,4 +1,4 @@
-use hyprqtile::{commands::MinimizeCommand, prelude::*, workspace};
+use hyprqtile::{commands::MinimizeCommand, prelude::*};
 use std::{thread::sleep, time::Duration};
 mod utils;
 use utils::*;
