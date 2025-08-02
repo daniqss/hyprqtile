@@ -2,7 +2,7 @@
   description = "Qtile-like workspaces and monitors management for Hyprland";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
   };
 
@@ -14,20 +14,20 @@
     utils.lib.eachDefaultSystem (
       system: let
         pkgs = import nixpkgs {inherit system;};
-        rustPlatform = pkgs.rustPlatform;
       in {
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            cargo
-            cargo-expand
-            rust-analyzer
-            rustc
-            rustfmt
-            clippy
-          ];
-        };
+        devShell = with pkgs;
+          mkShell {
+            buildInputs = [
+              cargo
+              cargo-expand
+              rust-analyzer
+              rustc
+              rustfmt
+              clippy
+            ];
+          };
 
-        packages.default = rustPlatform.buildRustPackage {
+        packages.default = pkgs.rustPlatform.buildRustPackage {
           pname = "hyprqtile";
           version = "0.1.7";
 
