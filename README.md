@@ -10,6 +10,25 @@ cargo install hyprqtile
 > [!WARNING]
 > Make sure that `~/.cargo/bin` is in your PATH
 
+## nixos
+add flake to your inputs
+```nix
+{
+  inputs = {
+    hyprqtile.url = "github:daniqss/hyprqtile";
+  };
+}
+```
+
+and add it to your packages
+```nix
+{
+  home.packages = [
+    inputs.hyprqtile.packages.${pkgs.system}.default
+  ];
+}
+```
+
 # usage
 ```hyprlang
 bind = SUPER, 1, exec, hyprqtile --workspace 1
