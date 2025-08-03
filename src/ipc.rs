@@ -5,6 +5,7 @@ use hyprland::dispatch::{
 };
 
 use hyprland::prelude::*;
+use hyprland::shared::HyprError;
 use hyprland::Result;
 
 pub struct MonitorsResult {
@@ -42,15 +43,13 @@ pub fn move_to(workspace_id: i32) -> Result<()> {
 
     if monitors.monitors.len() == 1 {
         switch_to_workspace(workspace_id, None)?;
-    }
+    };
 
     match monitors.passive_monitor {
         Some(passive_monitor_id) => {
-            swap_active_workspace(monitors.active_monitor, passive_monitor_id)?;
+            swap_active_workspace(monitors.active_monitor, passive_monitor_id)?
         }
-        None => {
-            switch_to_workspace(workspace_id, Some(monitors.active_monitor))?;
-        }
+        _ => switch_to_workspace(workspace_id, Some(monitors.active_monitor))?,
     }
 
     Ok(())
@@ -87,8 +86,29 @@ pub fn switch_to_workspace(workspace_id: i32, active_monitor_id: Option<i128>) -
     if let Some(active_monitor_id) = active_monitor_id {
         let workspace = WorkspaceIdentifier::Id(workspace_id);
         let active_monitor = MonitorIdentifier::Id(active_monitor_id);
-        Dispatch::call(DT::MoveWorkspaceToMonitor(workspace, active_monitor))?;
+
+        match Dispatch::call(DT::MoveWorkspaceToMonitor(workspace, active_monitor)) {
+            Err(e) => match e {
+                HyprError::NotOkDispatch(val)
+                    if val == "moveWorkspaceToMonitor workspace doesn't exist!".to_owned() =>
+                {
+                    ()
+                }
+                _ => return Err(e),
+            },
+            _ => (),
+        };
     }
-    Dispatch::call(DT::Workspace(workspace))?;
-    Ok(())
+
+    match Dispatch::call(DT::Workspace(workspace)) {
+        Ok(()) => Ok(()),
+        Err(e) => match e {
+            HyprError::NotOkDispatch(val)
+                if val == "Previous workspace doesn't exist".to_owned() =>
+            {
+                Ok(())
+            }
+            _ => Err(e),
+        },
+    }
 }
