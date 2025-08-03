@@ -25,6 +25,8 @@
               rustfmt
               clippy
             ];
+
+            RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
           };
 
         packages.default = pkgs.rustPlatform.buildRustPackage {
